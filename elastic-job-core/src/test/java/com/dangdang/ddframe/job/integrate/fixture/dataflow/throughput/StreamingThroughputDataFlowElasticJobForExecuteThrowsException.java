@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 1999-2015 dangdang.com.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,16 +17,14 @@
 
 package com.dangdang.ddframe.job.integrate.fixture.dataflow.throughput;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.quartz.JobExecutionException;
-
 import com.dangdang.ddframe.job.api.JobExecutionMultipleShardingContext;
 import com.dangdang.ddframe.job.exception.JobException;
 import com.dangdang.ddframe.job.plugin.job.type.dataflow.AbstractIndividualThroughputDataFlowElasticJob;
-
 import lombok.Getter;
+import org.quartz.JobExecutionException;
+
+import java.util.Collections;
+import java.util.List;
 
 public class StreamingThroughputDataFlowElasticJobForExecuteThrowsException extends AbstractIndividualThroughputDataFlowElasticJob<String> {
     
@@ -38,7 +36,7 @@ public class StreamingThroughputDataFlowElasticJobForExecuteThrowsException exte
         if (completed) {
             return null;
         }
-        return Arrays.asList("data");
+        return Collections.singletonList("data");
     }
     
     @Override

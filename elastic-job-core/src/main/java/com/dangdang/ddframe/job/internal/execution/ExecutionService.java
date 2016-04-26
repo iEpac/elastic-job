@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 1999-2015 dangdang.com.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,10 +17,6 @@
 
 package com.dangdang.ddframe.job.internal.execution;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import com.dangdang.ddframe.job.api.JobConfiguration;
 import com.dangdang.ddframe.job.api.JobExecutionMultipleShardingContext;
 import com.dangdang.ddframe.job.api.JobScheduler;
@@ -34,6 +30,10 @@ import com.dangdang.ddframe.job.internal.util.BlockUtils;
 import com.dangdang.ddframe.reg.base.CoordinatorRegistryCenter;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 执行作业的服务.
@@ -85,6 +85,45 @@ public class ExecutionService {
     }
     
     /**
+     * 清理作业上次运行时信息.
+     * 只会在主节点进行.
+     */
+    public void cleanPreviousExecutionInfo() {
+        if (!jobNodeStorage.isJobNodeExisted(ExecutionNode.ROOT)) {
+            return;
+        }
+        if (leaderElectionService.isLeader()) {
+            jobNodeStorage.fillEphemeralJobNode(ExecutionNode.CLEANING, "");
+            List<Integer> items = getAllItems();
+            for (int each : items) {
+                jobNodeStorage.removeJobNodeIfExisted(ExecutionNode.getCompletedNode(each));
+            }
+            if (jobNodeStorage.isJobNodeExisted(ExecutionNode.NECESSARY)) {
+                fixExecutionInfo(items);
+            }
+            jobNodeStorage.removeJobNodeIfExisted(ExecutionNode.CLEANING);
+        }
+        while (jobNodeStorage.isJobNodeExisted(ExecutionNode.CLEANING)) {
+            BlockUtils.waitingShortTime();
+        }
+    }
+    
+    private void fixExecutionInfo(final List<Integer> items) {
+        int newShardingTotalCount = configService.getShardingTotalCount();
+        int currentShardingTotalCount = items.size();
+        if (newShardingTotalCount > currentShardingTotalCount) {
+            for (int i = currentShardingTotalCount; i < newShardingTotalCount; i++) {
+                jobNodeStorage.createJobNodeIfNeeded(ExecutionNode.ROOT + "/" + i);
+            }
+        } else if (newShardingTotalCount < currentShardingTotalCount) {
+            for (int i = newShardingTotalCount; i < currentShardingTotalCount; i++) {
+                jobNodeStorage.removeJobNodeIfExisted(ExecutionNode.ROOT + "/" + i);
+            }
+        }
+        jobNodeStorage.removeJobNodeIfExisted(ExecutionNode.NECESSARY);
+    }
+    
+    /**
      * 注册作业完成信息.
      * 
      * @param jobExecutionShardingContext 作业运行时分片上下文
@@ -106,49 +145,6 @@ public class ExecutionService {
      */
     public void setNeedFixExecutionInfoFlag() {
         jobNodeStorage.createJobNodeIfNeeded(ExecutionNode.NECESSARY);
-    }
-    
-    /**
-     * 清理作业上次运行时信息.
-     * 只会在主节点进行.
-     */
-    public void cleanPreviousExecutionInfo() {
-        if (!isExecutionNodeExisted()) {
-            return;
-        }
-        if (leaderElectionService.isLeader()) {
-            jobNodeStorage.fillEphemeralJobNode(ExecutionNode.CLEANING, "");
-            List<Integer> items = getAllItems();
-            for (int each : items) {
-                jobNodeStorage.removeJobNodeIfExisted(ExecutionNode.getCompletedNode(each));
-            }
-            if (jobNodeStorage.isJobNodeExisted(ExecutionNode.NECESSARY)) {
-                fixExecutionInfo(items);
-            }
-            jobNodeStorage.removeJobNodeIfExisted(ExecutionNode.CLEANING);
-        }
-        while (jobNodeStorage.isJobNodeExisted(ExecutionNode.CLEANING)) {
-            BlockUtils.waitingShortTime();
-        }
-    }
-    
-    private boolean isExecutionNodeExisted() {
-        return jobNodeStorage.isJobNodeExisted(ExecutionNode.ROOT);
-    }
-    
-    private void fixExecutionInfo(final List<Integer> items) {
-        int newShardingTotalCount = configService.getShardingTotalCount();
-        int currentShardingTotalCount = items.size();
-        if (newShardingTotalCount > currentShardingTotalCount) {
-            for (int i = currentShardingTotalCount; i < newShardingTotalCount; i++) {
-                jobNodeStorage.createJobNodeIfNeeded(ExecutionNode.ROOT + "/" + i);
-            }
-        } else if (newShardingTotalCount < currentShardingTotalCount) {
-            for (int i = newShardingTotalCount; i < currentShardingTotalCount; i++) {
-                jobNodeStorage.removeJobNodeIfExisted(ExecutionNode.ROOT + "/" + i);
-            }
-        }
-        jobNodeStorage.removeJobNodeIfExisted(ExecutionNode.NECESSARY);
     }
     
     /**

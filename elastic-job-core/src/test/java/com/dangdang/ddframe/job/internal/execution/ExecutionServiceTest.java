@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 1999-2015 dangdang.com.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -166,12 +166,6 @@ public final class ExecutionServiceTest {
     }
     
     @Test
-    public void assertSetNeedFixExecutionInfoFlag() {
-        executionService.setNeedFixExecutionInfoFlag();
-        verify(jobNodeStorage).createJobNodeIfNeeded("leader/execution/necessary");
-    }
-    
-    @Test
     public void assertCleanPreviousExecutionInfoWhenNotMonitorExecution() {
         when(jobNodeStorage.isJobNodeExisted("execution")).thenReturn(false);
         executionService.cleanPreviousExecutionInfo();
@@ -275,6 +269,12 @@ public final class ExecutionServiceTest {
         verify(jobNodeStorage).removeJobNodeIfExisted("leader/execution/necessary");
         verify(jobNodeStorage).removeJobNodeIfExisted("leader/execution/cleaning");
         verify(jobNodeStorage).isJobNodeExisted("leader/execution/cleaning");
+    }
+    
+    @Test
+    public void assertSetNeedFixExecutionInfoFlag() {
+        executionService.setNeedFixExecutionInfoFlag();
+        verify(jobNodeStorage).createJobNodeIfNeeded("leader/execution/necessary");
     }
     
     @Test

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 1999-2015 dangdang.com.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,7 @@
 package com.dangdang.ddframe.job.api;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import com.dangdang.ddframe.job.internal.job.AbstractJobExecutionShardingContext;
 
@@ -56,4 +57,9 @@ public interface DataFlowElasticJob<T, C extends AbstractJobExecutionShardingCon
      * @param offset 数据处理位置
      */
     void updateOffset(final int item, final String offset);
+
+    /**
+     * 获取线程执行服务.
+     */
+    ExecutorService getExecutorService();
 }

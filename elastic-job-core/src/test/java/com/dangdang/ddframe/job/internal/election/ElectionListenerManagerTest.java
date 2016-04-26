@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 1999-2015 dangdang.com.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -95,15 +95,4 @@ public final class ElectionListenerManagerTest {
         verify(leaderElectionService).leaderElection();
         verify(shardingService).setReshardingFlag();
     }
-    
-//    @Test
-//    public void assertListenLeaderElection() {
-//        getRegistryCenter().persist("/testJob/leader/election/host", "host0");
-//        assertFalse(getRegistryCenter().isExisted("/testJob/leader/sharding/necessary"));
-//        WaitingUtils.waitingShortTime();
-//        getRegistryCenter().remove("/testJob/leader/election");
-//        WaitingUtils.waitingShortTime();
-//        assertThat(getRegistryCenter().get("/testJob/leader/election/host"), is(localHostService.getIp()));
-//        assertTrue(getRegistryCenter().isExisted("/testJob/leader/sharding/necessary"));
-//    }
 }

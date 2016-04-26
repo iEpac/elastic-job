@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 1999-2015 dangdang.com.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,14 +17,14 @@
 
 package com.dangdang.example.elasticjob.core.job;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.dangdang.ddframe.job.api.JobExecutionSingleShardingContext;
 import com.dangdang.ddframe.job.plugin.job.type.dataflow.AbstractIndividualSequenceDataFlowElasticJob;
 import com.dangdang.example.elasticjob.fixture.entity.Foo;
 import com.dangdang.example.elasticjob.fixture.repository.FooRepository;
 import com.dangdang.example.elasticjob.utils.PrintContext;
+
+import java.util.Collections;
+import java.util.List;
 
 public class SequenceDataFlowJobDemo extends AbstractIndividualSequenceDataFlowElasticJob<Foo> {
     
@@ -35,7 +35,7 @@ public class SequenceDataFlowJobDemo extends AbstractIndividualSequenceDataFlowE
     @Override
     public List<Foo> fetchData(final JobExecutionSingleShardingContext context) {
         printContext.printFetchDataMessage(context.getShardingItem());
-        return fooRepository.findActive(Arrays.asList(context.getShardingItem()));
+        return fooRepository.findActive(Collections.singletonList(context.getShardingItem()));
     }
     
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 1999-2015 dangdang.com.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -101,13 +101,12 @@ public class MonitorService {
         try (
                 BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                Socket autoCloseSocket = socket;
-            ) {
+                Socket autoCloseSocket = socket) {
             String cmdLine = reader.readLine();
             if (null != cmdLine && DUMP_COMMAND.equalsIgnoreCase(cmdLine)) {
                 List<String> result = new ArrayList<>();
                 dumpDirectly("/" + jobName, result);
-                outputMessage(writer, Joiner.on("\n").join(SensitiveInfoUtils.filterSenstiveIps(result)) + "\n");
+                outputMessage(writer, Joiner.on("\n").join(SensitiveInfoUtils.filterSensitiveIps(result)) + "\n");
             }
         } catch (final IOException ex) {
             log.warn(ex.getMessage());
@@ -118,6 +117,9 @@ public class MonitorService {
         for (String each : coordinatorRegistryCenter.getChildrenKeys(path)) {
             String zkPath = path + "/" + each;
             String zkValue = coordinatorRegistryCenter.get(zkPath);
+            if (null == zkValue) {
+                zkValue = "";
+            }
             TreeCache treeCache = (TreeCache) coordinatorRegistryCenter.getRawCache("/" + jobName);
             ChildData treeCacheData = treeCache.getCurrentData(zkPath);
             String treeCachePath =  null == treeCacheData ? "" : treeCacheData.getPath();

@@ -29,7 +29,7 @@
 * **Data processed concurrently:** Use concurrent threads processing fetched data, to improve throughput.
 * **Idempotency:** Judge duplicate task items, restrict repeatable task items execute. Because enable idempotency need monitor job execution status, the performance for instantaneous jobs maybe low.
 * **Failure tolerance:** If job servers lost connection from registry center, job will stop immediately which to prevent registry center assign crashed task items to other job servers, but current job servers still running, then cause duplicated task items running.
-* **Data offset store:**Store offset of last procesed data into Zookeeper.
+* **Data offset store:** Store offset of last processed data into Zookeeper.
 * **Spring support:** Integrate spring framework, customized namespace, place-holder supported etc.
 * **Web console:** Support web console to manage jobs and register centers.
 
@@ -68,14 +68,14 @@ Elastic-Job has deployed to Maven Central Repository, add dependencies in your p
 <dependency>
     <groupId>com.dangdang</groupId>
     <artifactId>elastic-job-core</artifactId>
-    <version>1.0.3</version>
+    <version>${lasted.release.version}</version>
 </dependency>
 
 <!-- add elastic-job spring module, use namespace -->
 <dependency>
     <groupId>com.dangdang</groupId>
     <artifactId>elastic-job-spring</artifactId>
-    <version>1.0.3</version>
+    <version>${lasted.release.version}</version>
 </dependency>
 ```
 * **Job development**

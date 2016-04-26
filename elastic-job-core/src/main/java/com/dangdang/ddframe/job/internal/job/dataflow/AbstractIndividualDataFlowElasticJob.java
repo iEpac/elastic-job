@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 1999-2015 dangdang.com.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,7 +37,7 @@ public abstract class AbstractIndividualDataFlowElasticJob<T, C extends Abstract
     protected final void processDataWithStatistics(final C shardingContext, final List<T> data) {
         Exception firstException = null;
         for (T each : data) {
-            boolean isSuccess = false;
+            boolean isSuccess;
             try {
                 isSuccess = processData(shardingContext, each);
             // CHECKSTYLE:OFF
